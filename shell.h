@@ -20,6 +20,4 @@ int is_interactive(void);
 int is_not_inreractive(char **argv);
 
 
-
-
 #endif
