@@ -15,9 +15,14 @@
 
 
 
+
 int check_interactive(char **argv);
 int is_interactive(void);
 int is_not_inreractive(char **argv);
+char *remove_comments(char *lineptr);
+char **split_cmd(char *str);
+char *_strdup(char *str);
+void free_arr(char **arr);
 
 
 
