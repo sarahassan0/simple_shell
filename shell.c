@@ -38,7 +38,7 @@ int check_interactive(char **argv)
 }
 
 /**
- * is_interactive -  launch shell in interactive mode.
+ * is_interactive - launch shell in interactive mode.
  *
  * Return: 0 on success
  */
