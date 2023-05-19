@@ -7,9 +7,12 @@
  *
  * Return: 0 on success
  */
+char **shell_args;
 
 int main(int argc, __attribute__((unused)) char *argv[])
 {
+	shell_args = argv;
+	signal(SIGINT, handler);
 	if (argc > 1)
 	{
 		printf("file\n");
@@ -18,9 +21,9 @@ int main(int argc, __attribute__((unused)) char *argv[])
 	}
 
 	check_interactive(argv);
+
 	return (0);
 }
-
 
 /**
  * check_interactive - check shell mode.
@@ -59,17 +62,12 @@ int is_interactive(void)
 			lineptr[read - 1] == '\n' ? lineptr[read - 1] = '\0' : 0;
 
 			str = remove_comments(lineptr);
-			printf("%s\n", str);
+			printf("test after removing comments: %s\n", str);
 			cmd = split_cmd(str);
-
-			printf("%s\n", cmd[0]);
-			printf("%s\n", cmd[1]);
-
+			printf("test the command: %s\n", cmd[0]);
+			check_cmd(cmd);
 		}
 		printf("$ ");
-
-
-
 	}
 	free(cmd);
 	free(lineptr);
@@ -77,7 +75,7 @@ int is_interactive(void)
 }
 
 /**
- * is_not_interactive -  launch shell in non-interactive mode.
+ * is_not_inreractive -  launch shell in non-interactive mode.
  * @argv: pointer to an array of arguments.
  *
  * Return: 0 on success
@@ -87,4 +85,19 @@ int is_not_inreractive(char **argv)
 
 	printf("pipe, %s\n", argv[0]);
 	return (0);
+}
+
+/**
+ * handler -  handel the signal.
+ * @sg: signal int.
+ *
+ * Return: void.
+ */
+void handler(int __attribute__((unused)) sg)
+{
+	if (sg == SIGINT)
+	{
+		write(1, "\n$ ", 3);
+		// exit(EXIT_SUCCESS);
+	}
 }

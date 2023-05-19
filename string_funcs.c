@@ -1,6 +1,6 @@
 #include "shell.h"
 
- /**
+/**
  * remove_comments - Removes comments from a command line input.
  * @lineptr: Pointer to the string containing the command line input.
  *
