@@ -12,12 +12,16 @@
  * Return: 1 on failure.
  */
 
-int check_cmd(char **cmd)
+int check_cmd(char **cmd, char **argv)
 {
 
 	// int i = 0;
 	if (cmd == NULL || *cmd == NULL)
+	{
+		// free_arr(cmd);
 		return (1);
+	}
+	printf("test the command ckeck_cmd: %s\n", cmd[0]);
 
 	// while (builtin_cmd[i] != NULL)
 	//     {
@@ -30,7 +34,7 @@ int check_cmd(char **cmd)
 	//             i++;
 	//     }
 
-	return (external_cmd(cmd));
+	return (external_cmd(cmd, argv));
 }
 
 /**
@@ -41,63 +45,69 @@ int check_cmd(char **cmd)
  */
 int is_path(char **cmd);
 
-int external_cmd(char **cmd)
+int external_cmd(char **cmd, char __attribute__((unused)) * *argv)
 {
 	char **PATH;
 	int i = 0;
 	char *cmd_path;
-	struct stat st;
+	// struct stat st;
+
+	if (cmd == NULL)
+		return (1);
 
 	if (!is_path(cmd))
 	{
 		PATH = find_path_env();
 
+		if (PATH == NULL)
+		{
+			free_arr(cmd);
+			return (1);
+		}
+
 		while (PATH[i] != NULL && PATH != NULL)
 		{
 			cmd_path = malloc(strlen(PATH[i]) + strlen(cmd[0]) + 2);
+			// write(1, cmd[0], strlen(cmd[0]));
+			// write(1, PATH[i], strlen(PATH[i]));
+
 			if (cmd_path == NULL)
-				return (1);
-			sprintf(cmd_path, "%s/%s", PATH[i], cmd[0]);
-			if (stat(cmd_path, &st) == 0)
 			{
-				if (access(cmd_path, X_OK) == 0)
-				{
-					printf("%s excutable command\n", cmd_path);
-					return (exec_external(cmd_path, cmd, 0));
-				}
-				write(2, shell_args[0], strlen(shell_args[0]));
-				write(2, ": ", 2);
-				perror(cmd_path);
+				free(PATH);
+				free_arr(cmd);
+				// free(cmd_path);
 				return (1);
 			}
-
+			sprintf(cmd_path, "%s/%s", PATH[i], cmd[0]);
+			if (access(cmd_path, F_OK) == 0)
+			{
+				free_arr(PATH);
+				printf("%s excutable command\n", cmd_path);
+				return (exec_external(cmd_path, cmd));
+			}
+			free(cmd_path);
 			i++;
 		}
+		free_arr(PATH);
 		write(2, cmd[0], strlen(cmd[0]));
 		write(2, ": ", 2);
-		write(2, "command not founddd\n", 19);
+		write(2, "command not found\n", 19);
+		free_arr(cmd);
 		return (1);
 	}
 
-	if (stat(cmd[0], &st) == 0)
+	if (access(cmd[0], F_OK) == 0)
 	{
-		/* check if the absolute path is exist and belongs to a file*/
-		if (S_ISDIR(st.st_mode))
-		{
-			write(2, shell_args[0], strlen(shell_args[0]));
-			write(2, ": ", 2);
-			write(2, cmd[0], strlen(cmd[0]));
-			write(2, ": is a directory\n", 17);
-			return (1);
-		}
-		printf("%s accesacle abslu\n", cmd[0]);
-		return (exec_external(cmd[0], cmd, 1));
+		printf("%s excutable command\n", cmd[0]);
+		return (exec_external(cmd[0], cmd));
 	}
 
 	/* if doesnt print err*/
+	printf("dddddddddddddddddddddddddddddddddddd\n");
 	write(2, shell_args[0], strlen(shell_args[0]));
 	write(2, ": ", 2);
 	perror(cmd[0]);
+	free_arr(cmd);
 	return (1);
 }
 
@@ -108,28 +118,43 @@ int external_cmd(char **cmd)
  *
  * Return: 1 on error.
  */
-int exec_external(char *cmd_path, char **cmd, int is_path)
+int exec_external(char *cmd_path, char **cmd)
 {
 	pid_t pid;
 	int status;
 
-	if (cmd_path == NULL || *cmd_path == '\0')
+	if (cmd_path == NULL || cmd == NULL)
+	{
+		if (cmd_path != cmd[0])
+			free(cmd_path);
+		free_arr(cmd);
+
 		return (1);
+	}
 
 	pid = fork();
 	if (pid == -1)
 	{
 		perror(cmd[0]);
+		if (cmd_path != cmd[0])
+			free(cmd_path);
+		free_arr(cmd);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
 	{
 		if (execve(cmd_path, cmd, NULL) == -1)
 		{
+
 			write(2, shell_args[0], strlen(shell_args[0]));
 			write(2, ": ", 2);
-			perror(cmd[0]);
+			perror(cmd_path);
+			if (cmd_path != cmd[0])
+				free(cmd_path);
+			free_arr(cmd);
+			exit(EXIT_FAILURE);
 		}
+
 		exit(EXIT_SUCCESS);
 	}
 	else
@@ -137,6 +162,10 @@ int exec_external(char *cmd_path, char **cmd, int is_path)
 		if (waitpid(pid, &status, 0) == -1)
 		{
 			perror("wait");
+			if (cmd_path != cmd[0])
+
+				free(cmd_path);
+			free_arr(cmd);
 			exit(EXIT_FAILURE);
 		}
 		if (cmd_path != cmd[0])
@@ -160,11 +189,12 @@ char **find_path_env(void)
 	char *path_env, *path_cpy, *token;
 	char **PATH;
 	int i = 0;
+	char **new_path;
 
 	path_env = getenv("PATH");
 	if (path_env == NULL)
 		return (NULL);
-	path_cpy = _strdup(path_env);
+	path_cpy = strdup(path_env);
 	if (path_cpy == NULL)
 		return (NULL);
 
@@ -178,19 +208,27 @@ char **find_path_env(void)
 	token = strtok(path_cpy, ":");
 	while (token != NULL)
 	{
-		PATH = realloc(PATH, (i + 2) * sizeof(char *));
-
-		PATH[i] = _strdup(token);
-		if (PATH[i] == NULL)
+		new_path = realloc(PATH, (i + 2) * sizeof(char *));
+		if (new_path == NULL)
 		{
 			free_arr(PATH);
 			free(path_cpy);
 			return (NULL);
 		}
+		PATH = new_path;
+		PATH[i] = strdup(token);
 
+		if (PATH[i] == NULL)
+		{
+			free_arr(PATH);
+			free(path_cpy);
+			free_arr(PATH);
+			return (NULL);
+		}
 		token = strtok(NULL, ":");
 		i++;
 	}
+
 	PATH[i] = NULL;
 	free(path_cpy);
 	return (PATH);

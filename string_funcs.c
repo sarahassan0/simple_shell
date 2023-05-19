@@ -14,12 +14,17 @@ char *remove_comments(char *lineptr)
 	char *str = NULL;
 
 	if (lineptr == NULL || *lineptr == '\0')
+	{
 		return (NULL);
+	}
 
 	len = strlen(lineptr);
 	str = malloc(len + 1);
 	if (str == NULL)
+	{
+		// free(lineptr);
 		return (NULL);
+	}
 
 	while (lineptr[i] != '\0' && lineptr[i] != '#' && lineptr[i] != '\n')
 	{
@@ -27,6 +32,7 @@ char *remove_comments(char *lineptr)
 		str[i] = lineptr[i];
 		i++;
 	}
+	// free(lineptr);
 	str[i] = '\0';
 	return (str);
 }
@@ -41,39 +47,48 @@ char *remove_comments(char *lineptr)
 
 char **split_cmd(char *str)
 {
-
 	char **words;
 	char *delim = " ";
 	char *token;
 	int i = 0;
 
 	if (str == NULL)
-		return (NULL);
-
+		return NULL;
 
 	words = malloc(sizeof(char *));
 	if (words == NULL)
 	{
-		return (NULL);
+		free(str);
+		return NULL;
 	}
+
 	token = strtok(str, delim);
 	while (token != NULL)
 	{
-		words = realloc(words, (i + 2) * sizeof(char *));
+		char **new_arr = realloc(words, (i + 2) * sizeof(char *));
+		if (new_arr == NULL)
+		{
+			free(str);
+			free_arr(words);
+			return NULL;
+		}
+		words = new_arr;
 
-
-		words[i] = _strdup(token);
+		words[i] = strdup(token);
 		if (words[i] == NULL)
 		{
+			free(str);
 			free_arr(words);
-			return (NULL);
+			return NULL;
 		}
 
 		token = strtok(NULL, delim);
 		i++;
 	}
+
 	words[i] = NULL;
-	return (words);
+	free(str);
+	return words;
 }
 
 /**
@@ -85,32 +100,34 @@ char **split_cmd(char *str)
  * NULL if insufficient memory was available.
  */
 
+// char *_strdup(char *str)
+// {
 
-char *_strdup(char *str)
-{
+// 	char *ptr;
+// 	int i, size = 0;
 
-	char *ptr;
-	int i, size = 0;
+// 	if (str == NULL)
+// 	{
+// 		return (NULL);
+// 	}
 
-	if (str == NULL)
-	{
-		return (NULL);
-	}
-
-	while (str[size] != '\0')
-	{
-		size++;
-	}
-	ptr = (char *)malloc(sizeof(char) * (size + 2));
-	if (ptr == NULL)
-		return (NULL);
-
-	for (i = 0; i <= size; i++)
-	{
-		ptr[i] = str[i];
-	}
-	return (ptr);
-}
+// 	while (str[size] != '\0')
+// 	{
+// 		size++;
+// 	}
+// 	ptr = (char *)malloc(sizeof(char) * (size + 2));
+// 	if (ptr == NULL)
+// 	{
+// 		free(str);
+// 		return (NULL);
+// 	}
+// 	for (i = 0; i <= size; i++)
+// 	{
+// 		ptr[i] = str[i];
+// 	}
+// 	// free(str);
+// 	return (ptr);
+// }
 
 /**
  * free_arr - Frees the memory allocated for an array of strings.
@@ -121,7 +138,7 @@ void free_arr(char **arr)
 {
 	int i;
 
-	if (arr == NULL)
+	if (arr == NULL || arr[0] == NULL)
 		return;
 	for (i = 0; arr[i] != NULL; i++)
 		free(arr[i]);

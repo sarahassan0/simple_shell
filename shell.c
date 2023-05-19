@@ -11,6 +11,7 @@ char **shell_args;
 
 int main(int argc, __attribute__((unused)) char *argv[])
 {
+	// if (argv != NULL)
 	shell_args = argv;
 	signal(SIGINT, handler);
 	if (argc > 1)
@@ -36,7 +37,7 @@ int check_interactive(char **argv)
 	if (argv == NULL)
 		return (-1);
 	if (isatty(STDIN_FILENO) > 0)
-		return (is_interactive());
+		return (is_interactive(argv));
 	else
 		return (is_not_inreractive(argv));
 }
@@ -46,7 +47,7 @@ int check_interactive(char **argv)
  *
  * Return: 0 on success
  */
-int is_interactive(void)
+int is_interactive(char **argv)
 {
 	char *lineptr = NULL;
 	size_t len = 0;
@@ -64,13 +65,17 @@ int is_interactive(void)
 			str = remove_comments(lineptr);
 			printf("test after removing comments: %s\n", str);
 			cmd = split_cmd(str);
-			printf("test the command: %s\n", cmd[0]);
-			check_cmd(cmd);
+			check_cmd(cmd, argv);
+			// free(lineptr);
 		}
 		printf("$ ");
 	}
-	free(cmd);
-	free(lineptr);
+	// if (read == -1)
+	// {
+	// 	free(lineptr);
+	// }
+	// free(str);
+	// free(lineptr);
 	return (0);
 }
 
