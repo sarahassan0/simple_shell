@@ -54,6 +54,7 @@ int is_interactive(char **argv, int cmds_counter)
 	ssize_t read;
 	char *str = NULL;
 	char **cmd = NULL;
+	int status;
 
 	printf("$ ");
 	while ((read = getline(&lineptr, &len, stdin)) != -1)
@@ -67,22 +68,25 @@ int is_interactive(char **argv, int cmds_counter)
 			str = remove_comments(lineptr);
 			printf("test after removing comments: %s\n", str);
 			cmd = split_cmd(str);
-			// check_cmd(cmd, argv, cmds_counter);
-			if (check_cmd(cmd, argv, cmds_counter) == 127)
-			{
+			check_cmd(cmd, argv, cmds_counter);
 
-				free(lineptr);
-			}
+			// if (check_cmd(cmd, argv, cmds_counter) == 127)
+			// {
+
+			// 	free(lineptr);
+			// }
 		}
 		// free(lineptr);
 		printf("$ ");
 	}
+	if (read == -1)
+	{
+		free(lineptr);
+		// return the last status
+		return status;
+	}
 	free(lineptr);
 
-	// if (read == -1)
-	// {
-	// 	free(lineptr);
-	// }
 	// free(str);
 	return (0);
 }

@@ -54,14 +54,12 @@ char **split_cmd(char *str)
 
 	if (str == NULL)
 		return NULL;
-
 	words = malloc(sizeof(char *));
 	if (words == NULL)
 	{
 		free(str);
 		return NULL;
 	}
-
 	token = strtok(str, delim);
 	while (token != NULL)
 	{
@@ -85,7 +83,6 @@ char **split_cmd(char *str)
 		token = strtok(NULL, delim);
 		i++;
 	}
-
 	words[i] = NULL;
 	free(str);
 	return words;

@@ -85,8 +85,8 @@ int exec_path(char **cmd, char **argv, int cmds_counter)
 			// printf("%s excutable command\n", cmd_path);
 			return (exec_external(cmd_path, cmd, argv, cmds_counter));
 		}
-		free(cmd_path);
 		i++;
+		free(cmd_path);
 	}
 	/* if doesnt print err*/
 	error_handler(argv[0], cmds_counter, cmd[0], NOT_FOUND_ERR);
