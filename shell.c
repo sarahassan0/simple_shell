@@ -8,21 +8,34 @@
  * Return: 0 on success
  */
 
-int main(int argc, __attribute__((unused)) char *argv[])
+int main(int argc, __attribute__((unused)) char **argv, char **env)
 {
-	int cmds_counter = 0;
+	global_t *shell_info;
+	int status;
+
+	shell_info = malloc(sizeof(global_t));
+
 	// if (argv != NULL)
+	shell_info->argv = argv;
+	shell_info->env = env;
+	shell_info->cmd = NULL;
+	shell_info->cmds_counter = 0;
+	// shell_info->cmds_counter = status;
+	// shell_info->child_pid = 0;
 	signal(SIGINT, handler);
+
+	// status = check_interactive(shell_info);
+	// shell_info->final_status = check_interactive(shell_info);
+	status = check_interactive(shell_info);
 	if (argc > 1)
 	{
 		printf("file\n");
 		read_file(argv);
 		return (0);
 	}
-
-	check_interactive(argv, cmds_counter);
-
-	return (0);
+	// free_arr(shell_info->cmd);
+	free(shell_info);
+	return (status);
 }
 
 /**
@@ -31,15 +44,15 @@ int main(int argc, __attribute__((unused)) char *argv[])
  *
  * Return: 0 on success
  */
-int check_interactive(char **argv, int cmds_counter)
+int check_interactive(global_t *shell_info)
 {
 
-	if (argv == NULL)
+	if (shell_info == NULL)
 		return (-1);
 	if (isatty(STDIN_FILENO) > 0)
-		return (is_interactive(argv, cmds_counter));
+		return (is_interactive(shell_info));
 	else
-		return (is_not_inreractive(argv, cmds_counter));
+		return (is_not_interactive(shell_info));
 }
 
 /**
@@ -47,48 +60,53 @@ int check_interactive(char **argv, int cmds_counter)
  *
  * Return: 0 on success
  */
-int is_interactive(char **argv, int cmds_counter)
+int is_interactive(global_t *shell_info)
+
 {
 	char *lineptr = NULL;
 	size_t len = 0;
 	ssize_t read;
 	char *str = NULL;
-	char **cmd = NULL;
-	int status;
+	// char **cmd = NULL;
+	// int status;
 
 	printf("$ ");
 	while ((read = getline(&lineptr, &len, stdin)) != -1)
 	{
 		if (read > 1)
 		{
-			cmds_counter++;
+			shell_info->cmds_counter++;
 
 			lineptr[read - 1] == '\n' ? lineptr[read - 1] = '\0' : 0;
 
 			str = remove_comments(lineptr);
-			printf("test after removing comments: %s\n", str);
-			cmd = split_cmd(str);
-			check_cmd(cmd, argv, cmds_counter);
+			// printf("test after removing comments: %s\n", str);
+			shell_info->cmd = split_cmd(str);
+			// printf("%s innnnnnnn", shell_info->cmd[0]);
+
+			shell_info->final_status = check_cmd(shell_info);
 
 			// if (check_cmd(cmd, argv, cmds_counter) == 127)
 			// {
 
-			// 	free(lineptr);
+			// free(lineptr);
 			// }
+			// printf("sssssssssssss :%d\n", status);
+			// printf("eeeeeeeeeee :%d\n", status_exit);
 		}
 		// free(lineptr);
 		printf("$ ");
 	}
-	if (read == -1)
-	{
-		free(lineptr);
-		// return the last status
-		return status;
-	}
+	// if (read == -1)
+	// {
+	// 	free(lineptr);
+	// 	// return the last status
+	// 	return status;
+	// }
 	free(lineptr);
 
 	// free(str);
-	return (0);
+	return (shell_info->final_status);
 }
 
 /**
@@ -97,28 +115,51 @@ int is_interactive(char **argv, int cmds_counter)
  *
  * Return: 0 on success
  */
-int is_not_inreractive(char __attribute__((unused)) * *argv, int __attribute__((unused)) cmds_counter)
+int is_not_interactive(global_t *shell_info)
 {
-	// char buffer[1024];
-	// ssize_t bytesRead;
+	char buffer[10000];
+	ssize_t bytesRead;
+	char *str = NULL;
+	char *lines[1000]; // Array to store input lines
+	int lineCount = 0; // Counter for line storage
 
 	// Read input from the pipe until there is no more data
-	// while ((bytesRead = read(STDIN_FILENO, buffer, sizeof(buffer))) > 0)
-	// {
-	// 	if (bytesRead < 0)
-	// 	{
-	// 		perror("read");
-	// 		exit(EXIT_FAILURE);
-	// 	}
-	// 	buffer[bytesRead - 1] == '\n' ? buffer[bytesRead - 1] = '\0' : 0;
-	// 	printf("%s", buffer);
-	// 	// Process the input data here
-	// 	// For demonstration, let's just print the input
-	// 	write(STDOUT_FILENO, buffer, bytesRead);
-	// 	printf("pipe, %s\n", argv[0]);
-	// }
+	bytesRead = read(STDIN_FILENO, buffer, sizeof(buffer));
+	if (bytesRead < 0)
+	{
+		perror("read");
+		exit(EXIT_FAILURE);
+	}
 
-	return (0);
+	// Split buffer into lines and store them
+	char *line = strtok(buffer, "\n");
+	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
+	{
+		// Allocate memory for the line and copy its contents
+		lines[lineCount] = strdup(line);
+		if (lines[lineCount] == NULL)
+		{
+			perror("strdup");
+			exit(EXIT_FAILURE);
+		}
+
+		lineCount++;
+		line = strtok(NULL, "\n");
+		shell_info->cmds_counter++;
+	}
+
+	// Process each line separately
+	for (int i = 0; i < lineCount; i++)
+	{
+		str = remove_comments(lines[i]);
+		shell_info->cmd = split_cmd(str);
+		shell_info->final_status = check_cmd(shell_info);
+
+		// Free the allocated memory for each line
+		free(lines[i]);
+	}
+
+	return shell_info->final_status;
 }
 
 int read_file(char __attribute__((unused)) * *argv)
@@ -126,3 +167,5 @@ int read_file(char __attribute__((unused)) * *argv)
 	printf("file");
 	return (0);
 }
+
+// split_line
