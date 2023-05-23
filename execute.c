@@ -1,37 +1,5 @@
 #include "shell.h"
 
-/**
- * check_cmd -  check if the command is built-in or external command.
- * @shell_info: pointer to struct of shell info.
- *
- * Return: 0 on sucsses.
- */
-int check_cmd(global_t *shell_info)
-{
-
-	int i;
-	char *builtin_cmd[] = {"exit", "env", "cd", NULL};
-
-	int (*builtin_func[])(global_t *shell_info) = {
-	    &exit_cmd, &print_env, &cd_cmd};
-	i = 0;
-
-	if (shell_info->cmd == NULL || shell_info->cmd[0] == NULL)
-	{
-		free_arr(shell_info->cmd);
-		return (0);
-	}
-
-	while (builtin_cmd[i] != NULL)
-	{
-		if (strcmp(shell_info->cmd[0], builtin_cmd[i]) == 0)
-		{
-			return ((*builtin_func[i])(shell_info));
-		}
-		i++;
-	}
-	return (external_cmd(shell_info));
-}
 
 /**
  * external_cmd -  check the access of external command program.
