@@ -1,20 +1,72 @@
 
 ------------------------------
-Test file name: ./tests/15//comment_after_cmd_print_no_space.bash
+Test file name: ./tests/3//bin_ls (3).bash
 
-(command)[echo "/bin/echo HBTN#This is a comment" | ./shsh]
+The variable $shell_input is not defined in ./tests/3//bin_ls (3).bash!
+------------------------------
+Test file name: ./tests/3//bin_ls_1_arg (1).bash
+
+The variable $shell_input is not defined in ./tests/3//bin_ls_1_arg (1).bash!
+------------------------------
+Test file name: ./tests/3//bin_ls_3_times (1).bash
+
+The variable $shell_input is not defined in ./tests/3//bin_ls_3_times (1).bash!
+------------------------------
+Test file name: ./tests/3//bin_ls_spaces (1).bash
+
+The variable $shell_input is not defined in ./tests/3//bin_ls_spaces (1).bash!
+------------------------------
+Test file name: ./tests/3//env_ignore_ls.bash
+
+(command)[echo "ls" | ./shsh]
 
 [GOT]:
-(stdout)[HBTN
-](Length: 5)
+(stdout)[](Length: 0)
+(stderr)[](Length: 0)
+(status)[1]
+
+[EXPECTED]:
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: ls: not found
+](Length: 24)
+(status)[127]
+
+Environment:
+_=/usr/bin/env
+------------------------------
+Test file name: ./tests/3//ls_in_current_dir (2).bash
+
+The variable $shell_input is not defined in ./tests/3//ls_in_current_dir (2).bash!
+------------------------------
+Test file name: ./tests/3//path_path1_var.bash
+
+(command)[echo "hbtn_ls" | ./shsh]
+
+[GOT]:
+(stdout)[README.md
+allowed_functions
+build-in_cmds.c
+execute.c
+hbtn_ls
+helpers.c
+ls.txt
+output.txt
+shell
+shell.c
+shell.h
+shsh
+string_funcs.c
+tests
+wrapperZXC.sh
+](Length: 152)
 (stderr)[](Length: 0)
 (status)[0]
 
 [EXPECTED]:
-(stdout)[HBTN#This is a comment
-](Length: 23)
-(stderr)[](Length: 0)
-(status)[0]
+(stdout)[](Length: 0)
+(stderr)[./shsh: 1: hbtn_ls: not found
+](Length: 30)
+(status)[127]
 
 Environment:
 SHELL=/bin/bash
@@ -29,34 +81,10 @@ TERM=xterm-256color
 LESSOPEN=| /usr/bin/lesspipe %s
 USER=root
 SHLVL=2
+PATH1=/root/shell/simple_shell
 DEBUGINFOD_URLS=
 WSLENV=
 XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Program Files/WindowsApps/CanonicalGroupLimited.Ubuntu22.04LTS_2204.2.47.0_x64__79rhkp1fndgsc:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/nodejs/:/mnt/c/Program Files (x86)/dotnet/:/mnt/c/Users/sarah/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/sarah/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/sarah/AppData/Roaming/npm:/mnt/c/Program Files/heroku/bin:/mnt/c/Program Files/nodejs/node_global:/mnt/c/Users/PK/AppData/Roaming/npm/node_modules/@angular/cli/bin:/mnt/c/Users/sarah/.npm-packages/node_modules/.bin:/snap/bin
 HOSTTYPE=x86_64
 OLDPWD=/root
 _=/usr/bin/env
-------------------------------
-Test file name: 1
-
-The variable $shell_input is not defined in 1!
-------------------------------
-Test file name: -n
-
-The variable $shell_input is not defined in -n!
-------------------------------
-Test file name: -n
-
-The variable $shell_input is not defined in -n!
-------------------------------
-Test file name: 1
-
-The variable $shell_input is not defined in 1!
-------------------------------
-Test file name: -n
-
-The variable $shell_input is not defined in -n!
-------------------------------
-Test file name: -n
-
-The variable $shell_input is not defined in -n!

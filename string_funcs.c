@@ -19,6 +19,8 @@ char *remove_comments(char *lineptr)
 	{
 		return (NULL);
 	}
+	if (lineptr[0] == '#')
+		return (0);
 
 	len = strlen(lineptr);
 	str = malloc(len + 1);
@@ -28,11 +30,15 @@ char *remove_comments(char *lineptr)
 		return (NULL);
 	}
 
-	while (lineptr[i] != '\0' && lineptr[i] != '#' && lineptr[i] != '\n')
+	while (lineptr[i] != '\0' && lineptr[i] != '\n')
 	{
-
+		if (lineptr[i - 1] == ' ' && lineptr[i] == '#')
+		{
+			break;
+		}
 		str[i] = lineptr[i];
 		i++;
+		// }
 	}
 	// free(lineptr);
 	str[i] = '\0';

@@ -19,7 +19,7 @@ int check_cmd(global_t *shell_info)
 	i = 0;
 
 	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
-	if (shell_info->cmd[0] == NULL)
+	if (shell_info->cmd == NULL || shell_info->cmd[0] == NULL)
 	{
 		free_arr(shell_info->cmd);
 		return (0);
