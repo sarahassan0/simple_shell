@@ -160,22 +160,3 @@ int error_handler(global_t *shell_info, int error_type)
 	free(shell_info);
 	return (0);
 }
-
-/**
- * is_path - covert number to string.
- * @cmd: string to be converted to number.
- *
- * Return: 1 if path, 0 if not.
- */
-int is_path(char **cmd)
-{
-	int i = 0;
-
-	while (cmd[0][i] != '\0')
-	{
-		if (cmd[0][i] == '/')
-			return (1);
-		i++;
-	}
-	return (0);
-}
