@@ -1,34 +1,57 @@
 #include "shell.h"
 
-int exit_cmd(char **cmd, char **argv, int cmds_counter)
+int exit_cmd(global_t *shell_info)
 {
 	int status;
-	if (cmd == NULL || cmd[0] == NULL)
+	if (shell_info == NULL)
 	{
 
-		free_arr(cmd);
+		// free_arr(cmd);
 		return 0;
 	}
-	if (cmd[1])
+	if (shell_info->cmd[1])
 	{
 		// hande non number strinds
-		status = atoi(cmd[1]);
-		if (status <= 999999999)
+		status = _atoi(shell_info->cmd[1]);
+		if (status == -1)
 		{
-			printf("nnnnnnnn%d\n", status);
-			free_arr(cmd);
-			exit(status);
+			shell_info->final_status = error_handler(shell_info, EXIT_ERR);
+			// free_arr(shell_info->cmd);
 		}
 		else
 		{
-			error_handler(argv[0], cmds_counter, cmd[1], EXIT_ERR);
-			free_arr(cmd);
-			return (2);
+			// free_arr(shell_info->cmd);
+			exit(status);
 		}
+		// else
+		// {
+		// 	error_handler(shell_info, EXIT_ERR);
+		// 	free_arr(shell_info->cmd);
+		// 	error_handler(shell_info, EXIT_ERR);
+		// }
+	}
+	free_arr(shell_info->cmd);
+	exit(shell_info->final_status);
+}
+
+int print_env(global_t *shell_info)
+{
+	int i;
+	i = 0;
+
+	if (shell_info->env == NULL)
+	{
+		free_arr(shell_info->cmd);
+		return (EXIT_ERR);
 	}
 
-	free_arr(cmd);
-	exit(0);
+	while (shell_info->env[i] != NULL)
+	{
+		printf("%s\n", shell_info->env[i]);
+		i++;
+	}
+	free_arr(shell_info->cmd);
+	return (0);
 }
 
 // int cd_func(__attribute__((unused)) char **cmd)

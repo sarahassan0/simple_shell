@@ -1,0 +1,62 @@
+
+------------------------------
+Test file name: ./tests/15//comment_after_cmd_print_no_space.bash
+
+(command)[echo "/bin/echo HBTN#This is a comment" | ./shsh]
+
+[GOT]:
+(stdout)[HBTN
+](Length: 5)
+(stderr)[](Length: 0)
+(status)[0]
+
+[EXPECTED]:
+(stdout)[HBTN#This is a comment
+](Length: 23)
+(stderr)[](Length: 0)
+(status)[0]
+
+Environment:
+SHELL=/bin/bash
+WSL_DISTRO_NAME=Ubuntu-22.04
+NAME=DESKTOP-SQ9J3G7
+PWD=/root/shell/simple_shell
+LOGNAME=root
+HOME=/root
+LANG=C.UTF-8
+LESSCLOSE=/usr/bin/lesspipe %s %s
+TERM=xterm-256color
+LESSOPEN=| /usr/bin/lesspipe %s
+USER=root
+SHLVL=2
+DEBUGINFOD_URLS=
+WSLENV=
+XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/mnt/c/Program Files/WindowsApps/CanonicalGroupLimited.Ubuntu22.04LTS_2204.2.47.0_x64__79rhkp1fndgsc:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/nodejs/:/mnt/c/Program Files (x86)/dotnet/:/mnt/c/Users/sarah/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/sarah/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Users/sarah/AppData/Roaming/npm:/mnt/c/Program Files/heroku/bin:/mnt/c/Program Files/nodejs/node_global:/mnt/c/Users/PK/AppData/Roaming/npm/node_modules/@angular/cli/bin:/mnt/c/Users/sarah/.npm-packages/node_modules/.bin:/snap/bin
+HOSTTYPE=x86_64
+OLDPWD=/root
+_=/usr/bin/env
+------------------------------
+Test file name: 1
+
+The variable $shell_input is not defined in 1!
+------------------------------
+Test file name: -n
+
+The variable $shell_input is not defined in -n!
+------------------------------
+Test file name: -n
+
+The variable $shell_input is not defined in -n!
+------------------------------
+Test file name: 1
+
+The variable $shell_input is not defined in 1!
+------------------------------
+Test file name: -n
+
+The variable $shell_input is not defined in -n!
+------------------------------
+Test file name: -n
+
+The variable $shell_input is not defined in -n!

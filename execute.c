@@ -6,30 +6,36 @@
  *
  * Return: 1 on failure.
  */
-
-int check_cmd(char **cmd, char **argv, int cmds_counter)
+// pid_t pid;
+int check_cmd(global_t *shell_info)
 {
-	int i;
-	char *builtin_cmd[] = {"exit", NULL};
+	// printf("%s gggggggggggggg", shell_info->cmd[0]);
 
-	int (*builtin_func[])(char **cmd, char **argv, int cmds_counter) = {
-	    &exit_cmd};
+	int i;
+	char *builtin_cmd[] = {"exit", "env", NULL};
+
+	int (*builtin_func[])(global_t *shell_info) = {
+	    &exit_cmd, &print_env};
 	i = 0;
 
-	if (cmd == NULL || *cmd == NULL)
+	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
+	if (shell_info->cmd[0] == NULL)
 	{
-		free_arr(cmd);
-		return (1);
+		free_arr(shell_info->cmd);
+		return (0);
 	}
+
 	while (builtin_cmd[i] != NULL)
 	{
-		if (strcmp(cmd[0], builtin_cmd[i]) == 0)
+		if (strcmp(shell_info->cmd[0], builtin_cmd[i]) == 0)
 		{
-			return ((*builtin_func[i])(cmd, argv, cmds_counter));
+			return ((*builtin_func[i])(shell_info));
 		}
 		i++;
 	}
-	return (external_cmd(cmd, argv, cmds_counter));
+	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
+
+	return (external_cmd(shell_info));
 }
 
 /**
@@ -39,23 +45,24 @@ int check_cmd(char **cmd, char **argv, int cmds_counter)
  * Return: 1 on failure.
  */
 
-int external_cmd(char **cmd, char **argv, int cmds_counter)
+int external_cmd(global_t *shell_info)
 {
+	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
 
-	if (cmd == NULL)
-		return (1);
+	if (shell_info == NULL)
+		return (0);
 
-	if (access(cmd[0], F_OK) == 0)
+	if (access(shell_info->cmd[0], F_OK) == 0)
 	{
-		printf("%s excutable command\n", cmd[0]);
-		return (exec_external(cmd[0], cmd, argv, cmds_counter));
+		// printf("%s excutable command\n", cmd[0]);
+		return (exec_external(shell_info->cmd[0], shell_info));
 	}
 	else
 
-		return (exec_path(cmd, argv, cmds_counter));
+		return (exec_path(shell_info));
 }
 
-int exec_path(char **cmd, char **argv, int cmds_counter)
+int exec_path(global_t *shell_info)
 {
 	char **PATH;
 	int i = 0;
@@ -64,35 +71,45 @@ int exec_path(char **cmd, char **argv, int cmds_counter)
 
 	if (PATH == NULL)
 	{
-		free_arr(cmd);
+		free_arr(shell_info->cmd);
 		return (1);
 	}
 	/* check if cmd progam present in PATH env excute the cmd  */
+	// printf("%s excutable command\n", shell_info->cmd[0]);
+
 	while (PATH[i] != NULL && PATH != NULL)
 	{
-		cmd_path = malloc(strlen(PATH[i]) + strlen(cmd[0]) + 2);
+		cmd_path = malloc(strlen(PATH[i]) + strlen(shell_info->cmd[0]) + 2);
 		if (cmd_path == NULL)
 		{
 			free(PATH);
-			free_arr(cmd);
+			free_arr(shell_info->cmd);
 			// free(cmd_path);
-			return (1);
+			return (0);
 		}
-		sprintf(cmd_path, "%s/%s", PATH[i], cmd[0]);
+		sprintf(cmd_path, "%s/%s", PATH[i], shell_info->cmd[0]);
 		if (access(cmd_path, F_OK) == 0)
 		{
 			free_arr(PATH);
 			// printf("%s excutable command\n", cmd_path);
-			return (exec_external(cmd_path, cmd, argv, cmds_counter));
+			return (exec_external(cmd_path, shell_info));
 		}
 		i++;
 		free(cmd_path);
 	}
+	// printf("%s excutable command\n", shell_info->cmd[0]);
+
+	if (access(shell_info->cmd[0], F_OK) == 0)
+	{
+		// printf("%s excutable command\n", cmd_path);
+		return (exec_external(shell_info->cmd[0], shell_info));
+	}
 	/* if doesnt print err*/
-	error_handler(argv[0], cmds_counter, cmd[0], NOT_FOUND_ERR);
-	free_arr(cmd);
+	int status = error_handler(shell_info, NOT_FOUND_ERR);
+
+	free_arr(shell_info->cmd);
 	free_arr(PATH);
-	return (127);
+	return (status);
 }
 
 /**
@@ -102,67 +119,67 @@ int exec_path(char **cmd, char **argv, int cmds_counter)
  *
  * Return: 1 on error.
  */
-int exec_external(char *cmd_path, char **cmd, char **argv, int cmds_counter)
+int exec_external(char *cmd_path, global_t *shell_info)
 {
 	pid_t pid;
 	int status;
 
-	if (cmd_path == NULL || cmd == NULL)
+	if (cmd_path == NULL || shell_info == NULL)
 	{
-		if (cmd_path != cmd[0])
+		if (cmd_path != shell_info->cmd[0])
 			free(cmd_path);
-		free_arr(cmd);
-		return (1);
+		free_arr(shell_info->cmd);
+		return (0);
 	}
 	pid = fork();
+
 	if (pid == -1)
 	{
-		perror(cmd[0]);
-		if (cmd_path != cmd[0])
+		perror(shell_info->cmd[0]);
+		if (cmd_path != shell_info->cmd[0])
 			free(cmd_path);
-		free_arr(cmd);
+		free_arr(shell_info->cmd);
 		exit(EXIT_FAILURE);
 	}
 	else if (pid == 0)
 	{
-		printf("%s excutable \n", cmd_path);
+		// printf("%s excutable \n", cmd_path);
+		// signal(SIGINT, handler);
 
-		exec_child(cmd_path, cmd, argv, cmds_counter);
+		exec_child(cmd_path, shell_info);
 	}
+
 	if (waitpid(pid, &status, 0) == -1)
 	{
 		perror("wait");
-		if (cmd_path != cmd[0])
+		if (cmd_path != shell_info->cmd[0])
 			free(cmd_path);
-		free_arr(cmd);
+		free_arr(shell_info->cmd);
 		exit(EXIT_FAILURE);
 	}
-	if (cmd_path != cmd[0])
+	if (cmd_path != shell_info->cmd[0])
 		free(cmd_path);
-	free_arr(cmd);
+	free_arr(shell_info->cmd);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	else
 		return (WTERMSIG(status));
 }
 
-void exec_child(char *cmd_path, char **cmd, char **argv, int cmds_counter)
+void exec_child(char *cmd_path, global_t *shell_info)
 {
-	if (execve(cmd_path, cmd, NULL) == -1)
+	int status = 0;
+	if (execve(cmd_path, shell_info->cmd, shell_info->env) == -1)
 	{
-		printf("%s excutable command\n", cmd_path);
 
-		error_handler(argv[0], cmds_counter, cmd_path, PERMISSION_ERR);
-		if (cmd_path != cmd[0])
+		status = error_handler(shell_info, PERMISSION_ERR);
+		if (cmd_path != shell_info->cmd[0])
 			free(cmd_path);
-		// free(cmd_path);
-		free_arr(cmd);
-
-		exit(EXIT_FAILURE);
+		free_arr(shell_info->cmd);
+		exit(status);
 	}
-	printf("%s excutable mand\n", cmd_path);
 
-	exit(EXIT_SUCCESS);
+	exit(status);
 }
 
 // int is_path(char **cmd)

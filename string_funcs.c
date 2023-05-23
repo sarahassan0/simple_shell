@@ -10,6 +10,8 @@
 
 char *remove_comments(char *lineptr)
 {
+	// printf("%s\n", lineptr);
+
 	int i = 0, len = 0;
 	char *str = NULL;
 
@@ -34,6 +36,8 @@ char *remove_comments(char *lineptr)
 	}
 	// free(lineptr);
 	str[i] = '\0';
+	// printf("%s\n", str);
+
 	return (str);
 }
 
@@ -47,6 +51,8 @@ char *remove_comments(char *lineptr)
 
 char **split_cmd(char *str)
 {
+	// printf("%s\n", str);
+
 	char **words;
 	char *delim = " ";
 	char *token;
@@ -54,6 +60,12 @@ char **split_cmd(char *str)
 
 	if (str == NULL)
 		return NULL;
+	// while (str[i] != '\0' && str[i] != '\n')
+	// {
+
+	// 	str[i] = lineptr[i];
+	// 	i++;
+	// }
 	words = malloc(sizeof(char *));
 	if (words == NULL)
 	{
@@ -63,6 +75,7 @@ char **split_cmd(char *str)
 	token = strtok(str, delim);
 	while (token != NULL)
 	{
+
 		char **new_arr = realloc(words, (i + 2) * sizeof(char *));
 		if (new_arr == NULL)
 		{
@@ -73,6 +86,7 @@ char **split_cmd(char *str)
 		words = new_arr;
 
 		words[i] = strdup(token);
+		// printf("%s\n", str);
 		if (words[i] == NULL)
 		{
 			free(str);
@@ -84,6 +98,10 @@ char **split_cmd(char *str)
 		i++;
 	}
 	words[i] = NULL;
+	// printf("FFFFFFF");
+	// printf("%s", words[0]);
+	// printf("%s", words[1]);
+
 	free(str);
 	return words;
 }
@@ -176,4 +194,29 @@ char *num_to_char(int num)
 	}
 
 	return (cp_num);
+}
+int _atoi(char *s)
+{
+	unsigned int n, i;
+	char positive;
+
+	i = 0;
+	n = 0;
+	while (s[i] != '\0')
+	{
+		if (!((s[i] >= '0') && (s[i] <= '9')))
+		{
+			return (-1);
+		}
+		if (((s[i] >= '0') && (s[i] <= '9')))
+		{
+			n = (n * 10) + (s[i] - '0');
+		}
+		else if (s[i] == '+')
+			positive++;
+
+		i++;
+	}
+
+	return (n);
 }
