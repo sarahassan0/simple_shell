@@ -13,10 +13,12 @@
 #include <errno.h>
 #include <linux/limits.h>
 
+/* Macros */
 #define PERMISSION_ERR 126
 #define NOT_FOUND_ERR 127
 #define EXIT_ERR 2
 
+/* Structs */
 typedef struct global
 {
         char **argv;
@@ -24,38 +26,40 @@ typedef struct global
         char **cmd;
         int cmds_counter;
         int final_status;
-        // pid_t child_pid;
 
 } global_t;
+
+/* Functions */
 int check_interactive(global_t *shell_info);
 int is_interactive(global_t *shell_info);
 int is_not_interactive(global_t *shell_info);
+
+/* Excute functions */
+int check_cmd(global_t *shell_info);
+int external_cmd(global_t *shell_info);
+int exec_external(char *cmd_path, global_t *shell_info);
+int exec_path(global_t *shell_info);
+int exec_file(global_t *shell_info);
+void exec_child(char *cmd_path, global_t *shell_info);
+
+/* Helper functions */
+void free_arr(char **arr);
+char **find_path_env();
+int read_buff(global_t *shell_info, int fd);
+void handler(int sg);
+int error_handler(global_t *shell_info, int error_type);
+int is_path(char **cmd);
+
+/* string functions */
 char *remove_comments(char *lineptr);
 char **split_cmd(char *str);
 char *_strdup(char *str);
-void free_arr(char **arr);
-int check_cmd(global_t *shell_info);
-int external_cmd(global_t *shell_info);
-char **find_path_env();
-int exec_external(char *cmd_path, global_t *shell_info);
-void handler(int sg);
-// extern char **shell_args;
-// int is_path(char **cmd);
-int exec_path(global_t *shell_info);
-int exec_file(global_t *shell_info);
-char *num_to_char(int num);
-int error_handler(global_t *shell_info, int error_type);
-void exec_child(char *cmd_path, global_t *shell_info);
 int _atoi(char *s);
-int read_buff(global_t *shell_info, int fd);
+char *num_to_char(int num);
+
 /* built-in commands*/
 int exit_cmd(global_t *shell_info);
 int print_env(global_t *shell_info);
 int cd_cmd(global_t *shell_info);
-
-extern pid_t pid;
-extern int status_exit;
-
-// char *read_stream(void)
 
 #endif

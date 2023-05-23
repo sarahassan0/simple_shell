@@ -2,14 +2,12 @@
 
 /**
  * check_cmd -  check if the command is built-in or external command.
- * @cmd: pointer to an array of comand options.
+ * @shell_info: pointer to struct of shell info.
  *
- * Return: 1 on failure.
+ * Return: 0 on sucsses.
  */
-// pid_t pid;
 int check_cmd(global_t *shell_info)
 {
-	// printf("%s gggggggggggggg", shell_info->cmd[0]);
 
 	int i;
 	char *builtin_cmd[] = {"exit", "env", "cd", NULL};
@@ -18,7 +16,6 @@ int check_cmd(global_t *shell_info)
 	    &exit_cmd, &print_env, &cd_cmd};
 	i = 0;
 
-	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
 	if (shell_info->cmd == NULL || shell_info->cmd[0] == NULL)
 	{
 		free_arr(shell_info->cmd);
@@ -33,50 +30,48 @@ int check_cmd(global_t *shell_info)
 		}
 		i++;
 	}
-	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
-
 	return (external_cmd(shell_info));
 }
 
 /**
  * external_cmd -  check the access of external command program.
- * @cmd: pointer to an array of comand options.
+ * @shell_info: pointer to struct of shell info.
  *
- * Return: 1 on failure.
+ * Return: 0 on sucsses.
  */
 
 int external_cmd(global_t *shell_info)
 {
-	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);
-
 	if (shell_info == NULL)
 		return (0);
 
 	if (access(shell_info->cmd[0], F_OK) == 0)
 	{
-		// printf("%s excutable command\n", shell_info->cmd[0]);
 		return (exec_external(shell_info->cmd[0], shell_info));
 	}
 	else
-		// printf("%s command\n", shell_info->cmd[0]);
 		return (exec_path(shell_info));
 }
 
+/**
+ * exec_path -  excute programs present in the PATH env.
+ * @shell_info: pointer to struct of shell info.
+ *
+ * Return: 0 on sucsses.
+ */
 int exec_path(global_t *shell_info)
 {
 	char **PATH;
-	int i = 0;
+	int i = 0, status;
 	char *cmd_path;
-	PATH = find_path_env();
 
+	PATH = find_path_env();
 	if (PATH == NULL)
 	{
 		free_arr(shell_info->cmd);
 		return (1);
 	}
 	/* check if cmd progam present in PATH env excute the cmd  */
-	// printf("%s excutable command\n", shell_info->cmd[0]);
-
 	while (PATH[i] != NULL && PATH != NULL)
 	{
 		cmd_path = malloc(strlen(PATH[i]) + strlen(shell_info->cmd[0]) + 2);
@@ -91,22 +86,17 @@ int exec_path(global_t *shell_info)
 		if (access(cmd_path, F_OK) == 0)
 		{
 			free_arr(PATH);
-			// printf("%s excutable command\n", cmd_path);
 			return (exec_external(cmd_path, shell_info));
 		}
 		i++;
 		free(cmd_path);
 	}
-	// printf("%s excutable command\n", shell_info->cmd[0]);
-
 	if (access(shell_info->cmd[0], F_OK) == 0)
 	{
-		// printf("%s excutable command\n", cmd_path);
 		return (exec_external(shell_info->cmd[0], shell_info));
 	}
 	/* if doesnt print err*/
-	int status = error_handler(shell_info, NOT_FOUND_ERR);
-
+	status = error_handler(shell_info, NOT_FOUND_ERR);
 	free_arr(shell_info->cmd);
 	free_arr(PATH);
 	return (status);
@@ -114,10 +104,10 @@ int exec_path(global_t *shell_info)
 
 /**
  * exec_external -  excute external commands.
- * @cmd_path: command's path.
- * @cmd: pointer to an array of comand options.
+ * @cmd_path: command's string .
+ * @shell_info: pointer to struct of shell info.
  *
- * Return: 1 on error.
+ * Return: 0 on sucsses.
  */
 int exec_external(char *cmd_path, global_t *shell_info)
 {
@@ -132,7 +122,6 @@ int exec_external(char *cmd_path, global_t *shell_info)
 		return (0);
 	}
 	pid = fork();
-
 	if (pid == -1)
 	{
 		perror(shell_info->cmd[0]);
@@ -143,9 +132,6 @@ int exec_external(char *cmd_path, global_t *shell_info)
 	}
 	else if (pid == 0)
 	{
-		// printf("%s excutable \n", cmd_path);
-		// signal(SIGINT, handler);
-
 		exec_child(cmd_path, shell_info);
 	}
 
@@ -166,9 +152,17 @@ int exec_external(char *cmd_path, global_t *shell_info)
 		return (WTERMSIG(status));
 }
 
+/**
+ * exec_child - function to run the child process.
+ * @cmd_path: command's string .
+ * @shell_info: pointer to struct of shell info.
+ *
+ * Return: 0 on sucsses.
+ */
 void exec_child(char *cmd_path, global_t *shell_info)
 {
 	int status = 0;
+
 	if (execve(cmd_path, shell_info->cmd, shell_info->env) == -1)
 	{
 
@@ -181,15 +175,3 @@ void exec_child(char *cmd_path, global_t *shell_info)
 
 	exit(status);
 }
-
-// int is_path(char **cmd)
-// {
-// 	int i = 0;
-// 	while (cmd[0][i] != '\0')
-// 	{
-// 		if (cmd[0][i] == '/')
-// 			return (1);
-// 		i++;
-// 	}
-// 	return (0);
-// }

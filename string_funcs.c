@@ -10,8 +10,6 @@
 
 char *remove_comments(char *lineptr)
 {
-	// printf("%s\n", lineptr);
-
 	int i = 0, len = 0;
 	char *str = NULL;
 
@@ -32,7 +30,7 @@ char *remove_comments(char *lineptr)
 
 	while (lineptr[i] != '\0' && lineptr[i] != '\n')
 	{
-		if (lineptr[i - 1] == ' ' && lineptr[i] == '#')
+		if (lineptr[i] == ' ' && lineptr[i + 1] == '#')
 		{
 			break;
 		}
@@ -42,8 +40,6 @@ char *remove_comments(char *lineptr)
 	}
 	// free(lineptr);
 	str[i] = '\0';
-	// printf("%s\n", str);
-
 	return (str);
 }
 
@@ -57,121 +53,58 @@ char *remove_comments(char *lineptr)
 
 char **split_cmd(char *str)
 {
-	// printf("%s\n", str);
-
 	char **words;
 	char *delim = " ";
 	char *token;
 	int i = 0;
 
 	if (str == NULL)
-		return NULL;
-	// while (str[i] != '\0' && str[i] != '\n')
-	// {
-
-	// 	str[i] = lineptr[i];
-	// 	i++;
-	// }
+		return (NULL);
 	words = malloc(sizeof(char *));
 	if (words == NULL)
 	{
 		free(str);
-		return NULL;
+		return (NULL);
 	}
 	token = strtok(str, delim);
 	while (token != NULL)
 	{
-
 		char **new_arr = realloc(words, (i + 2) * sizeof(char *));
+
 		if (new_arr == NULL)
 		{
 			free(str);
 			free_arr(words);
-			return NULL;
+			return (NULL);
 		}
 		words = new_arr;
-
 		words[i] = strdup(token);
-		// printf("%s\n", str);
 		if (words[i] == NULL)
 		{
 			free(str);
 			free_arr(words);
-			return NULL;
+			return (NULL);
 		}
-
 		token = strtok(NULL, delim);
 		i++;
+		// free(new_arr);
 	}
-	words[i] = NULL;
-	// printf("FFFFFFF");
-	// printf("%s", words[0]);
-	// printf("%s", words[1]);
-
+	words[i] = '\0';
 	free(str);
-	return words;
+	return (words);
 }
 
 /**
- * _strdup - Returns a pointer to a newly allocated space in memory
- * and copies the given string.
- * @str: String to be duplicated.
+ * num_to_char - covert number to string.
+ * @num: string to be converted to number.
  *
- * Return: Pointer to the duplicated string,
- * NULL if insufficient memory was available.
+ * Return: string,
  */
-
-// char *_strdup(char *str)
-// {
-
-// 	char *ptr;
-// 	int i, size = 0;
-
-// 	if (str == NULL)
-// 	{
-// 		return (NULL);
-// 	}
-
-// 	while (str[size] != '\0')
-// 	{
-// 		size++;
-// 	}
-// 	ptr = (char *)malloc(sizeof(char) * (size + 2));
-// 	if (ptr == NULL)
-// 	{
-// 		free(str);
-// 		return (NULL);
-// 	}
-// 	for (i = 0; i <= size; i++)
-// 	{
-// 		ptr[i] = str[i];
-// 	}
-// 	// free(str);
-// 	return (ptr);
-// }
-
-/**
- * free_arr - Frees the memory allocated for an array of strings.
- * @arr: Array of strings to be freed.
- */
-
-void free_arr(char **arr)
-{
-	int i;
-
-	if (arr == NULL || arr[0] == NULL)
-		return;
-	for (i = 0; arr[i] != NULL; i++)
-		free(arr[i]);
-
-	free(arr);
-}
-
 char *num_to_char(int num)
 {
-	/*count digits*/
 	int c = 0, tmp = num;
-	char *cp_num;
+	char *str_num;
+
 	if (num == 0)
 	{
 		c = 1;
@@ -185,29 +118,38 @@ char *num_to_char(int num)
 		}
 	}
 
-	cp_num = malloc(sizeof(char) * (c + 1));
-	if (!cp_num)
+	str_num = malloc(sizeof(char) * (c + 1));
+	if (!str_num)
 	{
 		perror("malloc");
 		return (NULL);
 	}
-	cp_num[c] = '\0';
+	str_num[c] = '\0';
 	while (c != 0)
 	{
 		c--;
-		cp_num[c] = '0' + num % 10;
+		str_num[c] = '0' + num % 10;
 		num /= 10;
 	}
 
-	return (cp_num);
+	return (str_num);
 }
+
+/**
+ * _atoi - covert string to number.
+ * @s: string to be converted to number.
+ *
+ * Return: result of converting string to number, -1 on failure.
+ */
+
 int _atoi(char *s)
 {
-	unsigned int n, i;
-	char positive;
+	unsigned int result, i;
+	char sign;
 
 	i = 0;
-	n = 0;
+	result = 0;
+
 	while (s[i] != '\0')
 	{
 		if (!((s[i] >= '0') && (s[i] <= '9')))
@@ -216,13 +158,30 @@ int _atoi(char *s)
 		}
 		if (((s[i] >= '0') && (s[i] <= '9')))
 		{
-			n = (n * 10) + (s[i] - '0');
+			result = (result * 10) + (s[i] - '0');
 		}
 		else if (s[i] == '+')
-			positive++;
+			sign++;
 
 		i++;
 	}
 
-	return (n);
+	return (result);
+}
+
+/**
+ * free_arr - Free the memory allocated for an array of strings.
+ * @arr: Pointer to the array of strings to be freed.
+ */
+
+void free_arr(char **arr)
+{
+	int i;
+
+	if (arr == NULL)
+		return;
+	for (i = 0; arr[i] != NULL; i++)
+		free(arr[i]);
+
+	free(arr);
 }
