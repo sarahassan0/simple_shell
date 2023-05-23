@@ -79,7 +79,6 @@ int exec_path(global_t *shell_info)
 		{
 			free(PATH);
 			free_arr(shell_info->cmd);
-			// free(cmd_path);
 			return (0);
 		}
 		sprintf(cmd_path, "%s/%s", PATH[i], shell_info->cmd[0]);
@@ -95,7 +94,6 @@ int exec_path(global_t *shell_info)
 	{
 		return (exec_external(shell_info->cmd[0], shell_info));
 	}
-	/* if doesnt print err*/
 	status = error_handler(shell_info, NOT_FOUND_ERR);
 	free_arr(shell_info->cmd);
 	free_arr(PATH);

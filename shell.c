@@ -27,7 +27,6 @@ int main(int argc, char **argv, char **env)
 		return (0);
 	}
 	status = check_interactive(shell_info);
-	// free_arr(shell_info->cmd);
 	free(shell_info);
 	return (status);
 }
@@ -75,17 +74,10 @@ int is_interactive(global_t *shell_info)
 
 			shell_info->final_status = check_cmd(shell_info);
 		}
-		// free(lineptr);
 		printf("$ ");
 	}
-	// if (read == -1)
-	// {
-	// 	free(lineptr);
-	// 	// return the last status
-	// 	return status;
-	// }
+
 	free(lineptr);
-	// free(str);
 	return (shell_info->final_status);
 }
 

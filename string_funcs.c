@@ -24,7 +24,6 @@ char *remove_comments(char *lineptr)
 	str = malloc(len + 1);
 	if (str == NULL)
 	{
-		// free(lineptr);
 		return (NULL);
 	}
 
@@ -36,9 +35,7 @@ char *remove_comments(char *lineptr)
 		}
 		str[i] = lineptr[i];
 		i++;
-		// }
 	}
-	// free(lineptr);
 	str[i] = '\0';
 	return (str);
 }
@@ -87,7 +84,6 @@ char **split_cmd(char *str)
 		}
 		token = strtok(NULL, delim);
 		i++;
-		// free(new_arr);
 	}
 	words[i] = '\0';
 	free(str);

@@ -143,8 +143,6 @@ int error_handler(global_t *shell_info, int error_type)
 	else if (error_type == PERMISSION_ERR)
 	{
 		perror(shell_info->cmd[0]);
-		// free(counter);
-		// free_arr(shell_info->cmd);
 		free(counter);
 		return (PERMISSION_ERR);
 	}

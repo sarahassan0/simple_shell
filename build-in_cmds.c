@@ -13,7 +13,6 @@ int exit_cmd(global_t *shell_info)
 
 	if (shell_info == NULL)
 	{
-		// free_arr(cmd);
 		return (0);
 	}
 	if (shell_info->cmd[1])
@@ -22,11 +21,9 @@ int exit_cmd(global_t *shell_info)
 		if (status < 0 || status > 999999999)
 		{
 			shell_info->final_status = error_handler(shell_info, EXIT_ERR);
-			// free_arr(shell_info->cmd);
 		}
 		else
 		{
-			// free_arr(shell_info->cmd);
 			exit(status);
 		}
 	}
