@@ -1,4 +1,4 @@
-
+#include "shell.h"
 
 /**
  * remove_comments - Removes comments from a command line input.
