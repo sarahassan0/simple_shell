@@ -54,11 +54,11 @@ int external_cmd(global_t *shell_info)
 
 	if (access(shell_info->cmd[0], F_OK) == 0)
 	{
-		// printf("%s excutable command\n", cmd[0]);
+		// printf("%s excutable command\n", shell_info->cmd[0]);
 		return (exec_external(shell_info->cmd[0], shell_info));
 	}
 	else
-
+		// printf("%s command\n", shell_info->cmd[0]);
 		return (exec_path(shell_info));
 }
 

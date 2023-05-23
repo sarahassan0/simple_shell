@@ -14,21 +14,18 @@ int main(int argc, __attribute__((unused)) char **argv, char **env)
 	int status;
 
 	shell_info = malloc(sizeof(global_t));
-
-	// if (argv != NULL)
 	shell_info->argv = argv;
 	shell_info->env = env;
 	shell_info->cmd = NULL;
 	shell_info->cmds_counter = 0;
-	// shell_info->cmds_counter = status;
-	// shell_info->child_pid = 0;
+
 	signal(SIGINT, handler);
 
 	// status = check_interactive(shell_info);
 	// shell_info->final_status = check_interactive(shell_info);
 	if (argc > 1)
 	{
-		read_file(shell_info);
+		exec_file(shell_info);
 		return (0);
 	}
 	status = check_interactive(shell_info);
@@ -116,103 +113,17 @@ int is_interactive(global_t *shell_info)
  */
 int is_not_interactive(global_t *shell_info)
 {
-	char buffer[10000];
-	ssize_t bytesRead;
-	char *str = NULL;
-	char *lines[1000]; // Array to store input lines
-	int lineCount = 0; // Counter for line storage
-
-	// Read input from the pipe until there is no more data
-	bytesRead = read(STDIN_FILENO, buffer, sizeof(buffer));
-	if (bytesRead < 0)
-	{
-		perror("read");
-		exit(EXIT_FAILURE);
-	}
-
-	// Split buffer into lines and store them
-	char *line = strtok(buffer, "\n");
-	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
-	{
-		// Allocate memory for the line and copy its contents
-		lines[lineCount] = strdup(line);
-		if (lines[lineCount] == NULL)
-		{
-			perror("strdup");
-			exit(EXIT_FAILURE);
-		}
-
-		lineCount++;
-		line = strtok(NULL, "\n");
-		shell_info->cmds_counter++;
-	}
-
-	// Process each line separately
-	for (int i = 0; i < lineCount; i++)
-	{
-		str = remove_comments(lines[i]);
-		shell_info->cmd = split_cmd(str);
-		shell_info->final_status = check_cmd(shell_info);
-
-		// Free the allocated memory for each line
-		free(lines[i]);
-	}
-
-	return shell_info->final_status;
+	return read_buff(shell_info, 0);
 }
 
-int read_file(global_t *shell_info)
+int exec_file(global_t *shell_info)
 {
-	char buffer[10000];
-	ssize_t bytesRead;
-	char *str = NULL;
-	char *lines[1000];
-	int lineCount = 0;
 	int fd;
-
-	// printf("ssssssssssssssssssssssssssssssssssssssssssssssss");
 	fd = open(shell_info->argv[1], O_CREAT, S_IRUSR | S_IWUSR);
 	if (fd == -1)
 	{
 		perror("open");
 		exit(1);
 	}
-	bytesRead = read(fd, buffer, sizeof(buffer));
-	if (bytesRead < 0)
-	{
-		perror("read");
-		exit(0);
-	}
-
-	// Split buffer into lines and store them
-	char *line = strtok(buffer, "\n");
-	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
-	{
-		// Allocate memory for the line and copy its contents
-		lines[lineCount] = strdup(line);
-		if (lines[lineCount] == NULL)
-		{
-			perror("strdup");
-			exit(EXIT_FAILURE);
-		}
-
-		lineCount++;
-		line = strtok(NULL, "\n");
-		shell_info->cmds_counter++;
-	}
-
-	// Process each line separately
-	for (int i = 0; i < lineCount; i++)
-	{
-		str = remove_comments(lines[i]);
-		shell_info->cmd = split_cmd(str);
-		shell_info->final_status = check_cmd(shell_info);
-
-		// Free the allocated memory for each line
-		free(lines[i]);
-	}
-
-	return shell_info->final_status;
+	return read_buff(shell_info, fd);
 }
-
-// split_line

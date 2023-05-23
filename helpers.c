@@ -20,6 +20,45 @@ void handler(int __attribute__((unused)) sg)
 	}
 }
 
+int read_buff(global_t *shell_info, int fd)
+{
+	char buffer[10000];
+	ssize_t bytesRead;
+	char *str = NULL;
+	char *lines[1000];
+	int lineCount = 0;
+
+	bytesRead = read(fd, buffer, sizeof(buffer));
+	if (bytesRead < 0)
+	{
+		perror("read");
+		exit(0);
+	}
+	char *line = strtok(buffer, "\n");
+	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
+	{
+		lines[lineCount] = strdup(line);
+		if (lines[lineCount] == NULL)
+		{
+			perror("strdup");
+			exit(EXIT_FAILURE);
+		}
+
+		lineCount++;
+		line = strtok(NULL, "\n");
+		shell_info->cmds_counter++;
+	}
+	for (int i = 0; i < lineCount; i++)
+	{
+		str = remove_comments(lines[i]);
+		shell_info->cmd = split_cmd(str);
+		shell_info->final_status = check_cmd(shell_info);
+		free(lines[i]);
+	}
+
+	return shell_info->final_status;
+}
+
 /**
  * find_path_env-  find the absluote path of a command.
  *
