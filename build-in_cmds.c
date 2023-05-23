@@ -1,38 +1,6 @@
 #include "shell.h"
 
-/**
- * exit_cmd - Exit the shell.
- * @shell_info: Pointer to the global shell information.
- *
- * Return: No return.
- */
 
-int exit_cmd(global_t *shell_info)
-{
-	int status;
-
-	if (shell_info == NULL)
-	{
-		// free_arr(cmd);
-		return (0);
-	}
-	if (shell_info->cmd[1])
-	{
-		status = _atoi(shell_info->cmd[1]);
-		if (status < 0 || status > 999999999)
-		{
-			shell_info->final_status = error_handler(shell_info, EXIT_ERR);
-			// free_arr(shell_info->cmd);
-		}
-		else
-		{
-			// free_arr(shell_info->cmd);
-			exit(status);
-		}
-	}
-	free_arr(shell_info->cmd);
-	exit(shell_info->final_status);
-}
 
 /**
  * print_env - Print the environment variables.
