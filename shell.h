@@ -42,7 +42,7 @@ void handler(int sg);
 // extern char **shell_args;
 // int is_path(char **cmd);
 int exec_path(global_t *shell_info);
-int read_file(char **argv);
+int read_file(global_t *shell_info);
 char *num_to_char(int num);
 int error_handler(global_t *shell_info, int error_type);
 void exec_child(char *cmd_path, global_t *shell_info);
