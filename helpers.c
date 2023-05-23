@@ -114,7 +114,6 @@ char **find_path_env(void)
 	free(path_cpy);
 	return (PATH);
 }
-
 int error_handler(global_t *shell_info, int error_type)
 {
 	char *counter;
@@ -126,9 +125,13 @@ int error_handler(global_t *shell_info, int error_type)
 	write(STDERR_FILENO, ": ", 2);
 	if (error_type == EXIT_ERR)
 	{
-		write(STDERR_FILENO, "exit: ", 6);
+		write(STDERR_FILENO, shell_info->cmd[0], strlen(shell_info->cmd[0]));
+		write(STDERR_FILENO, ": ", 2);
+		if (strlen(shell_info->cmd[0]) == 2)
+			write(STDERR_FILENO, "can't cd to ", 12);
+		else
+			write(STDERR_FILENO, "Illegal number: ", 16);
 
-		write(STDERR_FILENO, "Illegal number: ", 16);
 		write(STDERR_FILENO, shell_info->cmd[1], strlen(shell_info->cmd[1]));
 		write(STDERR_FILENO, "\n", 1);
 		free(counter);
@@ -138,9 +141,9 @@ int error_handler(global_t *shell_info, int error_type)
 	else if (error_type == PERMISSION_ERR)
 	{
 		perror(shell_info->cmd[0]);
+		// free(counter);
+		// free_arr(shell_info->cmd);
 		free(counter);
-		// free(shell_info);
-
 		return (PERMISSION_ERR);
 	}
 	else if (error_type == NOT_FOUND_ERR)
@@ -154,6 +157,5 @@ int error_handler(global_t *shell_info, int error_type)
 	}
 	free(counter);
 	free(shell_info);
-
 	return (0);
 }

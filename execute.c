@@ -12,10 +12,10 @@ int check_cmd(global_t *shell_info)
 	// printf("%s gggggggggggggg", shell_info->cmd[0]);
 
 	int i;
-	char *builtin_cmd[] = {"exit", "env", NULL};
+	char *builtin_cmd[] = {"exit", "env", "cd", NULL};
 
 	int (*builtin_func[])(global_t *shell_info) = {
-	    &exit_cmd, &print_env};
+	    &exit_cmd, &print_env, &cd_cmd};
 	i = 0;
 
 	// printf("%s wwwwwwwwwwwww", shell_info->cmd[0]);

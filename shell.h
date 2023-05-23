@@ -51,6 +51,7 @@ int read_buff(global_t *shell_info, int fd);
 /* built-in commands*/
 int exit_cmd(global_t *shell_info);
 int print_env(global_t *shell_info);
+int cd_cmd(global_t *shell_info);
 
 extern pid_t pid;
 extern int status_exit;

@@ -5,7 +5,6 @@ int exit_cmd(global_t *shell_info)
 	int status;
 	if (shell_info == NULL)
 	{
-
 		// free_arr(cmd);
 		return 0;
 	}
@@ -13,7 +12,7 @@ int exit_cmd(global_t *shell_info)
 	{
 		// hande non number strinds
 		status = _atoi(shell_info->cmd[1]);
-		if (status == -1)
+		if (status < 0 || status > 999999999)
 		{
 			shell_info->final_status = error_handler(shell_info, EXIT_ERR);
 			// free_arr(shell_info->cmd);
@@ -23,12 +22,6 @@ int exit_cmd(global_t *shell_info)
 			// free_arr(shell_info->cmd);
 			exit(status);
 		}
-		// else
-		// {
-		// 	error_handler(shell_info, EXIT_ERR);
-		// 	free_arr(shell_info->cmd);
-		// 	error_handler(shell_info, EXIT_ERR);
-		// }
 	}
 	free_arr(shell_info->cmd);
 	exit(shell_info->final_status);
@@ -54,13 +47,16 @@ int print_env(global_t *shell_info)
 	return (0);
 }
 
-// int cd_func(__attribute__((unused)) char **cmd)
-// {
-//      if (chdir(cmd[1]) != 0)
-//     {
-//         perror(cmd[1]);
-//         return (-1);
-//     }
+int cd_cmd(global_t *shell_info)
+{
+	if (shell_info->cmd[1] == NULL)
+	{
+		return (0);
+	}
+	if (chdir(shell_info->cmd[1]) == -1)
+	{
+		return error_handler(shell_info, EXIT_ERR);
+	}
 
-//     return (0);
-// }
+	return (0);
+}
