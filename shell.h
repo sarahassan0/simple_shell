@@ -1,7 +1,6 @@
 #ifndef _SHELL_H_
 #define _SHELL_H_
 
-/* Standard liberaries */
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/types.h>
