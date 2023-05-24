@@ -19,6 +19,7 @@ int main(int argc, char **argv, char **env)
 	shell_info->env = env;
 	shell_info->cmd = NULL;
 	shell_info->cmds_counter = 0;
+	shell_info->final_status = 0;
 
 	signal(SIGINT, handler);
 	if (argc > 1)
