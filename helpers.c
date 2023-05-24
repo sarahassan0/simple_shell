@@ -41,7 +41,7 @@ int read_buff(global_t *shell_info, int fd)
 	line = strtok(buffer, "\n");
 	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
 	{
-		lines[lineCount] = _strdup(line);
+		lines[lineCount] = strdup(line);
 		if (lines[lineCount] == NULL)
 		{
 			perror("_strdup");
@@ -58,6 +58,7 @@ int read_buff(global_t *shell_info, int fd)
 		shell_info->cmd = split_cmd(str);
 		shell_info->final_status = check_cmd(shell_info);
 		free(lines[i]);
+		free(str);
 	}
 
 	return (shell_info->final_status);
