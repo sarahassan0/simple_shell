@@ -90,46 +90,6 @@ char **split_cmd(char *str)
 	return (words);
 }
 
-/**
- * num_to_char - covert number to string.
- * @num: string to be converted to number.
- *
- * Return: string,
- */
-char *num_to_char(int num)
-{
-	int c = 0, tmp = num;
-	char *str_num;
-
-	if (num == 0)
-	{
-		c = 1;
-	}
-	else
-	{
-		while (tmp != 0)
-		{
-			tmp /= 10;
-			c++;
-		}
-	}
-
-	str_num = malloc(sizeof(char) * (c + 1));
-	if (!str_num)
-	{
-		perror("malloc");
-		return (NULL);
-	}
-	str_num[c] = '\0';
-	while (c != 0)
-	{
-		c--;
-		str_num[c] = '0' + num % 10;
-		num /= 10;
-	}
-
-	return (str_num);
-}
 
 /**
  * _atoi - covert string to number.
