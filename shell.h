@@ -17,6 +17,7 @@
 #define PERMISSION_ERR 126
 #define NOT_FOUND_ERR 127
 #define EXIT_ERR 2
+extern char **environ;
 
 /* Structs */
 typedef struct global
@@ -61,5 +62,11 @@ char *num_to_char(int num);
 int exit_cmd(global_t *shell_info);
 int print_env(global_t *shell_info);
 int cd_cmd(global_t *shell_info);
+
+char *_strdup(char *str);
+int _strlen(char *s);
+int _strcmp(char *s1, char *s2);
+char *_getenv(char *name);
+int _sprintf(char *str, const char *format, ...);
 
 #endif

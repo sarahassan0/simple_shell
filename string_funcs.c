@@ -8,88 +8,6 @@
  *         NULL if lineptr is NULL or an empty string.
  */
 
-char *remove_comments(char *lineptr)
-{
-	int i = 0, len = 0;
-	char *str = NULL;
-
-	if (lineptr == NULL || *lineptr == '\0')
-	{
-		return (NULL);
-	}
-	if (lineptr[0] == '#')
-		return (0);
-
-	len = strlen(lineptr);
-	str = malloc(len + 1);
-	if (str == NULL)
-	{
-		return (NULL);
-	}
-
-	while (lineptr[i] != '\0' && lineptr[i] != '\n')
-	{
-		if (lineptr[i] == ' ' && lineptr[i + 1] == '#')
-		{
-			break;
-		}
-		str[i] = lineptr[i];
-		i++;
-	}
-	str[i] = '\0';
-	return (str);
-}
-
-/**
- * split_cmd - Splits a string into an array of words based on a delimiter.
- * @str: Pointer to the string to be split.
- *
- * Return: Dynamically allocated array of strings (words) obtained by splitting
- *         the input string, NULL if str is NULL or memory allocation fails.
- */
-
-char **split_cmd(char *str)
-{
-	char **words;
-	char *delim = " ";
-	char *token;
-	int i = 0;
-
-	if (str == NULL)
-		return (NULL);
-	words = malloc(sizeof(char *));
-	if (words == NULL)
-	{
-		free(str);
-		return (NULL);
-	}
-	token = strtok(str, delim);
-	while (token != NULL)
-	{
-		char **new_arr = realloc(words, (i + 2) * sizeof(char *));
-
-		if (new_arr == NULL)
-		{
-			free(str);
-			free_arr(words);
-			return (NULL);
-		}
-		words = new_arr;
-		words[i] = strdup(token);
-		if (words[i] == NULL)
-		{
-			free(str);
-			free_arr(words);
-			return (NULL);
-		}
-		token = strtok(NULL, delim);
-		i++;
-	}
-	words[i] = '\0';
-	free(str);
-	return (words);
-}
-
 /**
  * num_to_char - covert number to string.
  * @num: string to be converted to number.
@@ -165,19 +83,83 @@ int _atoi(char *s)
 	return (result);
 }
 
-/**
- * free_arr - Free the memory allocated for an array of strings.
- * @arr: Pointer to the array of strings to be freed.
- */
-
-void free_arr(char **arr)
+/*
+char *_strdup(char *str)
 {
-	int i;
 
+	char *ptr;
+	int i, size = 0;
+
+	if (str == NULL)
+	{
+		return (NULL);
+	}
+
+	while (str[size] != '\0')
+	{
+		size++;
+	}
+	ptr = (char *)malloc(sizeof(char) * (size + 2));
+	if (ptr == NULL)
+	{
+		free(str);
+		return (NULL);
+	}
+	for (i = 0; i <= size; i++)
+	{
+		ptr[i] = str[i];
+	}
+	// free(str);
+	return (ptr);
+}
+*/
+
+int _strlen(char *s)
+{
+	int len;
+
+	len = 0;
+	if (s[0] == '\0')
+		return (0);
+
+	while (s[len] != '\0')
+	{
+		len++;
+	}
+	return (len);
+}
+char *_strdup(char *str)
+{
+	int len;
+	char *arr;
+
+	if (str == NULL)
+		return (NULL);
+	len = _strlen(str);
+	arr = malloc((sizeof(char) * len) + 1);
 	if (arr == NULL)
-		return;
-	for (i = 0; arr[i] != NULL; i++)
-		free(arr[i]);
+		return (NULL);
+	arr[len] = '\0';
+	while (len--)
+		arr[len] = str[len];
+	return (arr);
+}
 
-	free(arr);
+int _strcmp(char *s1, char *s2)
+{
+	while (((*s1 != '\0') && (*s2 != '\0')) && (*s1 == *s2))
+	{
+		s1++;
+		s2++;
+	}
+
+	if (*s1 == *s2)
+	{
+		return (0);
+	}
+
+	else
+	{
+		return (*s1 - *s2);
+	}
 }
