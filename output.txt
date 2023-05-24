@@ -1,5 +1,0 @@
-
-------------------------------
-Test file name: tests/4//exit_neg_number (1).bash
-
-The variable $shell_input is not defined in tests/4//exit_neg_number (1).bash!

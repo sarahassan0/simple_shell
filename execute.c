@@ -13,7 +13,7 @@ int check_cmd(global_t *shell_info)
 	char *builtin_cmd[] = {"exit", "env", "cd", NULL};
 
 	int (*builtin_func[])(global_t *shell_info) = {
-		&exit_cmd, &print_env, &cd_cmd};
+	    &exit_cmd, &print_env, &cd_cmd};
 	i = 0;
 
 	if (shell_info->cmd == NULL || shell_info->cmd[0] == NULL)
