@@ -77,8 +77,8 @@ int is_interactive(global_t *shell_info)
 		}
 		printf("$ ");
 	}
-
 	free(lineptr);
+
 	return (shell_info->final_status);
 }
 
