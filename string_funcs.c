@@ -36,6 +36,7 @@ char *remove_comments(char *lineptr)
 		str[i] = lineptr[i];
 		i++;
 	}
+	free(lineptr);
 	str[i] = '\0';
 	return (str);
 }

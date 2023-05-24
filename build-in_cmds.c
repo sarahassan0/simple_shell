@@ -24,10 +24,12 @@ int exit_cmd(global_t *shell_info)
 		}
 		else
 		{
+			free(shell_info);
 			exit(status);
 		}
 	}
 	free_arr(shell_info->cmd);
+
 	exit(shell_info->final_status);
 }
 
