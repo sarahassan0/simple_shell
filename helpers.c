@@ -30,6 +30,8 @@ int read_buff(global_t *shell_info, int fd)
 	char *lines[1000];
 	int i, lineCount = 0;
 
+	memset(buffer, 0, sizeof(buffer));
+
 	n_bytes = read(fd, buffer, sizeof(buffer));
 	if (n_bytes < 0)
 	{
@@ -37,7 +39,7 @@ int read_buff(global_t *shell_info, int fd)
 		exit(0);
 	}
 	line = strtok(buffer, "\n");
-	while (line != NULL)
+	while (line != NULL && lineCount < (int)(sizeof(lines) / sizeof(lines[0])))
 	{
 		lines[lineCount] = _strdup(line);
 		if (lines[lineCount] == NULL)
