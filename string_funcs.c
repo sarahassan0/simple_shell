@@ -40,55 +40,7 @@ char *remove_comments(char *lineptr)
 	return (str);
 }
 
-/**
- * split_cmd - Splits a string into an array of words based on a delimiter.
- * @str: Pointer to the string to be split.
- *
- * Return: Dynamically allocated array of strings (words) obtained by splitting
- *         the input string, NULL if str is NULL or memory allocation fails.
- */
 
-char **split_cmd(char *str)
-{
-	char **words;
-	char *delim = " ";
-	char *token;
-	int i = 0;
-
-	if (str == NULL)
-		return (NULL);
-	words = malloc(sizeof(char *));
-	if (words == NULL)
-	{
-		free(str);
-		return (NULL);
-	}
-	token = strtok(str, delim);
-	while (token != NULL)
-	{
-		char **new_arr = realloc(words, (i + 2) * sizeof(char *));
-
-		if (new_arr == NULL)
-		{
-			free(str);
-			free_arr(words);
-			return (NULL);
-		}
-		words = new_arr;
-		words[i] = strdup(token);
-		if (words[i] == NULL)
-		{
-			free(str);
-			free_arr(words);
-			return (NULL);
-		}
-		token = strtok(NULL, delim);
-		i++;
-	}
-	words[i] = '\0';
-	free(str);
-	return (words);
-}
 
 /**
  * num_to_char - covert number to string.
