@@ -58,7 +58,6 @@ int read_buff(global_t *shell_info, int fd)
 		shell_info->cmd = split_cmd(str);
 		shell_info->final_status = check_cmd(shell_info);
 		free(lines[i]);
-		free(str);
 	}
 
 	return (shell_info->final_status);
