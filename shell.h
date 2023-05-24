@@ -20,6 +20,17 @@
 extern char **environ;
 
 /* Structs */
+
+/**
+ * struct global - struct for global info
+ * @argv:pointer to array of argv.
+ * @env: pointer to array of environment variables.
+ * @cmd: pointer to array of splitted command.
+ * @cmds_counter: commands counter.
+ * @final_status: final exit status of the shell
+ *
+ * Description:  struct for global info of the shell
+ */
 typedef struct global
 {
 	char **argv;
@@ -62,9 +73,5 @@ char *num_to_char(int num);
 int exit_cmd(global_t *shell_info);
 int print_env(global_t *shell_info);
 int cd_cmd(global_t *shell_info);
-
-char *_strdup(char *str);
-int _strcmp(char *s1, char *s2);
-int _sprintf(char *str, const char *format, ...);
 
 #endif
