@@ -13,7 +13,7 @@ int check_cmd(global_t *shell_info)
 	char *builtin_cmd[] = {"exit", "env", "cd", NULL};
 
 	int (*builtin_func[])(global_t *shell_info) = {
-	    &exit_cmd, &print_env, &cd_cmd};
+		&exit_cmd, &print_env, &cd_cmd};
 	i = 0;
 
 	if (shell_info->cmd == NULL || shell_info->cmd[0] == NULL)
@@ -24,7 +24,7 @@ int check_cmd(global_t *shell_info)
 
 	while (builtin_cmd[i] != NULL)
 	{
-		if (_strcmp(shell_info->cmd[0], builtin_cmd[i]) == 0)
+		if (strcmp(shell_info->cmd[0], builtin_cmd[i]) == 0)
 		{
 			return ((*builtin_func[i])(shell_info));
 		}
@@ -74,14 +74,14 @@ int exec_path(global_t *shell_info)
 	/* check if cmd progam present in PATH env excute the cmd  */
 	while (PATH[i] != NULL && PATH != NULL)
 	{
-		cmd_path = malloc(_strlen(PATH[i]) + _strlen(shell_info->cmd[0]) + 2);
+		cmd_path = malloc(strlen(PATH[i]) + strlen(shell_info->cmd[0]) + 2);
 		if (cmd_path == NULL)
 		{
 			free(PATH);
 			free_arr(shell_info->cmd);
 			return (0);
 		}
-		_sprintf(cmd_path, "%s/%s", PATH[i], shell_info->cmd[0]);
+		sprintf(cmd_path, "%s/%s", PATH[i], shell_info->cmd[0]);
 		if (access(cmd_path, F_OK) == 0)
 		{
 			free_arr(PATH);

@@ -22,11 +22,11 @@ extern char **environ;
 /* Structs */
 typedef struct global
 {
-        char **argv;
-        char **env;
-        char **cmd;
-        int cmds_counter;
-        int final_status;
+	char **argv;
+	char **env;
+	char **cmd;
+	int cmds_counter;
+	int final_status;
 
 } global_t;
 
@@ -64,9 +64,7 @@ int print_env(global_t *shell_info);
 int cd_cmd(global_t *shell_info);
 
 char *_strdup(char *str);
-int _strlen(char *s);
 int _strcmp(char *s1, char *s2);
-char *_getenv(char *name);
 int _sprintf(char *str, const char *format, ...);
 
 #endif
