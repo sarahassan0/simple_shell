@@ -164,20 +164,3 @@ int _atoi(char *s)
 
 	return (result);
 }
-
-/**
- * free_arr - Free the memory allocated for an array of strings.
- * @arr: Pointer to the array of strings to be freed.
- */
-
-void free_arr(char **arr)
-{
-	int i;
-
-	if (arr == NULL)
-		return;
-	for (i = 0; arr[i] != NULL; i++)
-		free(arr[i]);
-
-	free(arr);
-}
